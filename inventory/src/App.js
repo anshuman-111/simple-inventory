@@ -4,6 +4,7 @@ import ViewInv from './components/ViewInv';
 import AddItems from './components/AddItems';
 import EditItems from './components/EditItems';
 import Navbar from './components/Navbar';
+import Dashboard from './components/Dashboard';
 
 function App() {
 
@@ -12,10 +13,10 @@ function App() {
   return (
     <Router>
     <div className='font-textMont bg-fixed h-auto bg-auto bg-backg backdrop-blur-lg'>
-    <div className='flex flex-col h-screen items-center backdrop-blur-lg'>
+    <div className='flex flex-col h-screen w-full items-center backdrop-blur-lg'>
     {<Navbar />}
       <Routes>
-        <Route path='/' element={<ViewInv />}/>
+        <Route path='/dashboard' element={<Dashboard />}/>
         <Route path='/view' element={<ViewInv />}/>
         <Route path='/add' element={<AddItems />}/>
         <Route path='/edit' element={<EditItems />}/>

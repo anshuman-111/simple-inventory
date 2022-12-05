@@ -14,14 +14,18 @@ const Navbar = () => {
 
     const links = [
         {   id : 1,
-            link: "View Inventory",
-            url: "/"
+            link: "Dashboard",
+            url: "/dashboard"
         },
         {   id : 2,
+            link: "View Inventory",
+            url: "/view"
+        },
+        {   id : 3,
             link: "Add Items",
             url: "/add"
         },
-        {   id : 3,
+        {   id : 4,
             link: "Edit Items",
             url: "/edit"
         },
