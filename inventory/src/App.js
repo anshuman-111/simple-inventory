@@ -13,8 +13,8 @@ function App() {
 
   return (
     <Router>
-    <div className='font-textMont bg-fixed h-auto bg-auto bg-backg backdrop-blur-lg'>
-    <div className='flex flex-col h-screen w-full items-center backdrop-blur-lg'>
+    <div className='font-textMont bg-fixed w-screen h-auto bg-repeat bg-backg backdrop-blur-lg'>
+    <div className='flex flex-col h-screen w-screen items-center backdrop-blur-lg'>
     {<Navbar />}
       <Routes>
         <Route path='/dashboard' element={<Dashboard />}/>

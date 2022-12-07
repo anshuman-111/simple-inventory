@@ -63,6 +63,11 @@ def add():
 def delete():
     return "DELETE FEATURE"
 
+@app.route('/sell_item' , methods=["POST"])
+def sale():
+    res = request.json
+    return res
+
 
 # Dashboard route
 @app.route('/home')

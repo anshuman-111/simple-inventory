@@ -2,3 +2,4 @@ flask-server/venv
 flask-server/__pycache__
 inventory/node_modules
 flask_server/cred.env
+inventory/src/components/hardcoded_table

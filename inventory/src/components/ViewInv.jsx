@@ -3,7 +3,7 @@ import {FiEdit3} from 'react-icons/fi'
 import {ImBin2} from 'react-icons/im'
 const ViewInv = () => {
 
-  const tableHeaders = [
+const tableHeaders = [
   {
     id: 1,
     h_name: 'Item ID'
@@ -84,10 +84,8 @@ const showData = [{
   fetchedData: " from server"
 },
 ]
+
 const [rows, setRows] = useState([{}])
-
-
-
 
 useEffect(() => {
   // Using fetch to fetch the api from 
@@ -108,26 +106,11 @@ useEffect(() => {
   );
 }, []);
 
-const [showEditModal, setEditModal] = useState(false)
-const [showDelModal, setDelModal] = useState(false)
+const Row = (props) => {
+    const {row} = props
 
-
-  return (
-    <div>
-      <div className='mt-40 bg-gray-100 text-black rounded-t-3xl rounded-b-3xl p-6 w-auto mx-2'>
-        <table className='justify-center text-center table-auto'>
-        
-          <thead>
-            <tr className=''>
-              {tableHeaders.map(({id, h_name}) => (
-                <th className='text-xl px-3 border-2' key={id}>{h_name}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody className='pt-4 bg-green-100 rounded-t-xl'>
-            {rows.map((row)=>
-            
-            <tr className='hover:bg-black hover:text-white text-black duration-200'>
+    return (
+      <tr key={row.item_id} className='hover:bg-black hover:text-white text-black duration-200'>
               <td>{row.item_id}</td>
               <td>{row.item_name}</td>
               <td>{row.quantity}</td>
@@ -211,7 +194,7 @@ const [showDelModal, setDelModal] = useState(false)
   
 
           ) : null}
-          {showDelModal ? (
+             {showDelModal ? (
             <>
             <div
             className="justify-center items-start flex  overflow-y-auto fixed inset-0 z-50"
@@ -222,7 +205,7 @@ const [showDelModal, setDelModal] = useState(false)
                 
                 <div className="flex items-start justify-between p-5 border-b border-solid border-slate-200 rounded-t">
                   <h3 className="text-3xl font-semibold">
-                    Delete Item INSERT ITEM ID
+                    Delete Item {}
                   </h3>
                   
                 </div>
@@ -252,12 +235,57 @@ const [showDelModal, setDelModal] = useState(false)
           </div>
           <div className="opacity-25 fixed inset-0 z-40 bg-black"></div>
         </>
-            ) : null}
-            </tr> )}
-            
+          ) : null}
+            </tr>
+    )
+}
+
+
+const Table = (props) => {
+    const {data} = props
+    return (
+      <table className='justify-center overflow-x-auto overflow-hidden text-center w-fit table-auto'>
+        
+          <thead>
+            <tr className=''>
+              {tableHeaders.map(({id, h_name}) => (
+                <th className='text-xl px-3 border-2' key={id}>{h_name}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody className='pt-4 bg-green-100 rounded-t-xl'>
+            {data.map((row,index) => 
+              <Row key={`key-${index}`} row = {row} />
+            )}
           </tbody>
-        </table>
-       
+          </table>
+    )
+}
+
+
+/* const [editModalDate, setModalData] = useState([{
+  item_id : "",
+  item_name : "",
+  purchase_date : "",
+  purchase_price: "",
+  quantity : "",
+  quantity_sold : "",
+  sell_price: "",
+  sell_date: ""
+}])
+
+
+ */
+
+const [showEditModal, setEditModal] = useState(false)
+const [showDelModal, setDelModal] = useState(false)
+
+
+  return (
+    <div>
+      <div className='mt-40 w-fit sm:overflow-x-auto sm:overflow-hidden bg-gray-100 text-black rounded-t-3xl rounded-b-3xl p-6 mx-2'>
+        <Table data = {rows} />
+      
       </div>
     </div>
   )

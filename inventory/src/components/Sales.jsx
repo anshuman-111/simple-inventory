@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 const Sales = () => {
 
     const date = new Date()
-    const inputFields = [{
+    const saleFields = [{
         labelFor: "item_name", 
         labText: "ITEM NAME: ",
         inpType: "text",
@@ -19,7 +19,8 @@ const Sales = () => {
         labelFor: "sell_price", 
         labText: "SELLING PRICE: ",
         inpType: "number",
-        placeholder: 'Enter Selling Price here'
+        placeholder: 'Enter Selling Price here',
+        value: '45'
       },
       {
         labelFor: "sell_date", 
@@ -84,7 +85,7 @@ const Sales = () => {
       <h1 className='text-center text-2xl md:text-4xl py-2 mb-3 mx-auto w-96 mt-20 text-black bg-white rounded-b-3xl'> RECORD SALE </h1> 
       <div className='flex flex-col w-full items-center bg-white rounded-2xl p-5'>
         <form className='flex flex-col items-center'>
-          {inputFields.map(({labelFor, labText, inpType, placeholder, value}, index) => 
+          {saleFields.map(({labelFor, labText, inpType, placeholder, value}, index) => 
           (
             <div className="grid" key={index}>
               <label className='mt-2' htmlFor={labelFor}> {labText} </label>

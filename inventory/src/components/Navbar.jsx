@@ -40,7 +40,7 @@ const Navbar = () => {
 
   return (
     <div className='flex items-center justify-between 
-    h-20 w-full px-4 z-10 top-0 text-white fixed bg-black'>
+    h-20 w-screen px-4 z-10 top-0 text-white fixed bg-black'>
             <h1 className="text-5xl mt-0.3 ml-1"> InvBuddy </h1>
 
         <ul className='hidden md:flex'>
