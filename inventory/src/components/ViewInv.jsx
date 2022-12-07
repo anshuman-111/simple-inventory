@@ -6,11 +6,13 @@ const ViewInv = () => {
 const tableHeaders = [
   {
     id: 1,
-    h_name: 'Item ID'
+    h_name: 'Item ID',
+    style : 'sticky;'
   },
   {
     id: 2,
-    h_name: 'Item Name'
+    h_name: 'Item Name',
+    style : 'sticky;'
   },
   {
     id: 3,
@@ -95,22 +97,15 @@ useEffect(() => {
           // Setting a data from api
           console.log(data)
           setRows(data);
-            /* itemID : data.itemID,
-            itemName: data.itemName,
-            qty: data.qty,
-            purPrice: data.purPrice,
-            purDate: data.purDate,
-            sellPrice: data.sellPrice,
-            sellDate: data.sellDate */
       })
   );
 }, []);
 
 const Row = (props) => {
-    const {row} = props
+    const {row, index} = props
 
     return (
-      <tr key={row.item_id} className='hover:bg-black hover:text-white text-black duration-200'>
+      <tr key={row.item_id} className='hover:bg-black group hover:text-white text-black duration-200' >
               <td>{row.item_id}</td>
               <td>{row.item_name}</td>
               <td>{row.quantity}</td>
@@ -120,12 +115,91 @@ const Row = (props) => {
               <td>{row.quantity_sold}</td>
               <td>{row.sell_date}</td>
               <td className='flex flex-row items-center justify-center'>
-                <td onClick={()=>setEditModal(true)}
-                className='mr-1 hover:bg-emerald-700 hover:cursor-pointer rounded-xl duration-300 p-3'>{ <FiEdit3 size={20}/>}</td> 
-                <td onClick={()=>setDelModal(true)}
-                className='ml-1 mr-2 hover:bg-red-600 hover:cursor-pointer rounded-xl duration-300 p-3'>{<ImBin2 size={20}/>}</td> 
+                <button onClick={()=>setEditModal(true)}
+                className='mr-1 hover:bg-emerald-700 hover:cursor-pointer rounded-xl duration-300 p-3'>{ <FiEdit3 size={20}/>}</button> 
+                <button onClick={()=>{setDelModal(true); setIdx(index); setDelData({item_id:row.item_id, item_name:row.item_name})}} 
+                className='ml-1 mr-2 hover:bg-red-600 hover:cursor-pointer rounded-xl duration-300 p-3'>{<ImBin2 size={20}/>}</button> 
               </td>
-              {showEditModal ? (
+              
+            </tr>
+    )
+}
+
+
+const Table = (props) => {
+    const {data, delRow} = props
+    return (
+      <table className='justify-center text-center'>
+        
+          <thead>
+            <tr>
+              {tableHeaders.map(({id, h_name, style}) => (
+                <th className='md:text-xl text-md px-3 border-2 z-8 sticky' style={{position : style}} key={id}>{h_name}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody className='pt-4 bg-green-100 rounded-t-xl'>
+            {data.map((row,index) => 
+              <Row key={`key-${index}`} delRow={delRow} row = {row} index = {index} />
+            )}
+          </tbody>
+          </table>
+    )
+}
+
+
+/* const [editModalDate, setModalData] = useState([{
+  item_id : "",
+  item_name : "",
+  purchase_date : "",
+  purchase_price: "",
+  quantity : "",
+  quantity_sold : "",
+  sell_price: "",
+  sell_date: ""
+}])
+
+
+ */
+
+const [showEditModal, setEditModal] = useState(false)
+const [showDelModal, setDelModal] = useState(false)
+const [idxData, setIdx] = useState()
+const [delData, setDelData] = useState({
+  item_id: 0,
+  item_name: ""
+})
+
+const deleteRow = (idx) => {
+  var dpRow = [...rows]
+  dpRow = dpRow.filter(
+    (row, index) => idx!==index
+  )
+  if (delData){
+    fetch("/del_item", {method : "POST", body: JSON.stringify(delData), 
+    headers: {"content-type": "application/json"},})
+    .then((res) => {
+      if (!res.ok) return Promise.reject(res);
+      const msg = document.getElementById('conf-msg')
+      msg.style = "color: green; font-weight: bold;"
+      document.getElementById('conf-msg').innerHTML = "ITEM DELETED SUCCESSFULLY"
+      
+      console.log("SENT TO SERVER")
+      return res.json();
+    }).then((data) => {
+      console.log(data)
+    }).catch(console.error)
+  }else{
+    const msg = document.getElementById('conf-msg')
+    msg.style = "color: red; font-weight: bold;"
+    msg.innerHTML = " MISSING ITEM DETAILS! "
+  }
+  setRows(dpRow)
+}
+
+  return (
+    <div className='absolute'>
+      {showEditModal ? (
             <>
             <div
             className="justify-center items-start flex  overflow-y-auto fixed inset-0 z-50"
@@ -194,7 +268,7 @@ const Row = (props) => {
   
 
           ) : null}
-             {showDelModal ? (
+      {showDelModal ? (
             <>
             <div
             className="justify-center items-start flex  overflow-y-auto fixed inset-0 z-50"
@@ -224,11 +298,11 @@ const Row = (props) => {
                   </button>
                   <button
                     className='bg-red-800 ml-4 px-5 py-3 border-2 border-black rounded-3xl hover:scale-110 hover:bg-red-400 hover:text-black duration-300 text-white'
-                    type="button" onClick={() => setDelModal(false)}
+                    type="button" onClick={() => {setDelModal(false); deleteRow(idxData); }}
                   >
                     Confirm Delete
                   </button>
-                    
+                  <p id='conf-msg'></p>
                 </div>
               </div>
             </div>
@@ -236,55 +310,10 @@ const Row = (props) => {
           <div className="opacity-25 fixed inset-0 z-40 bg-black"></div>
         </>
           ) : null}
-            </tr>
-    )
-}
-
-
-const Table = (props) => {
-    const {data} = props
-    return (
-      <table className='justify-center overflow-x-auto overflow-hidden text-center w-fit table-auto'>
-        
-          <thead>
-            <tr className=''>
-              {tableHeaders.map(({id, h_name}) => (
-                <th className='text-xl px-3 border-2' key={id}>{h_name}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody className='pt-4 bg-green-100 rounded-t-xl'>
-            {data.map((row,index) => 
-              <Row key={`key-${index}`} row = {row} />
-            )}
-          </tbody>
-          </table>
-    )
-}
-
-
-/* const [editModalDate, setModalData] = useState([{
-  item_id : "",
-  item_name : "",
-  purchase_date : "",
-  purchase_price: "",
-  quantity : "",
-  quantity_sold : "",
-  sell_price: "",
-  sell_date: ""
-}])
-
-
- */
-
-const [showEditModal, setEditModal] = useState(false)
-const [showDelModal, setDelModal] = useState(false)
-
-
-  return (
-    <div>
-      <div className='mt-40 w-fit sm:overflow-x-auto sm:overflow-hidden bg-gray-100 text-black rounded-t-3xl rounded-b-3xl p-6 mx-2'>
-        <Table data = {rows} />
+      <div className='mt-40 mx-4 overflow-hidden overflow-x-auto md:w-fit w-96 bg-gray-100 text-black rounded-t-3xl rounded-b-3xl p-6'>
+        <Table data = {rows} 
+          delRow = {deleteRow}
+        />
       
       </div>
     </div>

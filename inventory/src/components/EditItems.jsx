@@ -68,7 +68,7 @@ const EditItems = () => {
   return (
     <div>
       <div>
-      <h1 className=' text-center text-lg sm:text-2xl md:text-3xl py-5 mb-3 mx-auto w-96 mt-20 text-black bg-white rounded-b-3xl'> EDIT ITEM </h1>
+      <h1 className=' text-center text-lg sm:text-2xl md:text-3xl py-5 mb-3 mx-auto w-96 text-black bg-white rounded-b-3xl'> EDIT ITEM </h1>
       </div>
         <form className='flex flex-col items-center bg-white rounded-2xl p-5'>
           {inputFields.map(({id, labelFor, labText, inpType}) => 

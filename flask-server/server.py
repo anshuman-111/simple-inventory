@@ -19,6 +19,7 @@ user_aws=os.getenv('AWSRDS_USER')
 
 
 # Connecting to AWS DB Instance
+
 db = pymysql.connect(host='database-1.c5jdmaeqpbra.ap-southeast-2.rds.amazonaws.com', user='admin', password='root5337',cursorclass=pymysql.cursors.DictCursor)
 
 # Initializing DB cursor
@@ -53,15 +54,21 @@ def add():
 
     #SQL Query to add data to DB
     insert_query = ''' 
-        INSERT INTO purchase(item_name,quantity,purchase_price,purchase_date) VALUES ('%s','%s', '%s', '%s') ''' % (res['itemName'],res['qty'],res['purPrice'],res['purDate'])
+        INSERT INTO purchase(item_name,quantity,purchase_price,purchase_date) 
+        VALUES ('%s','%s', '%s', '%s') ''' % (res['itemName'],res['qty'],res['purPrice'],res['purDate'])
     cursor.execute(insert_query)
     db.commit()
     return "Added to DB"
 
 # Delete Item route
-@app.route('/delete' , methods=['POST'])
-def delete():
-    return "DELETE FEATURE"
+@app.route('/del_item' , methods=['POST'])
+def del_item():
+    res = request.json
+    cursor = db.cursor()
+    delete_query = ''' DELETE FROM purchase WHERE item_id='%s' AND item_name='%s' ''' % (res['item_id'], res['item_name'])
+    cursor.execute(delete_query)
+    print(res)
+    return "OK"
 
 @app.route('/sell_item' , methods=["POST"])
 def sale():

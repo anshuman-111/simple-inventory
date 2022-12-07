@@ -79,7 +79,7 @@ const AddItems = () => {
       <h1 className='text-center text-2xl md:text-4xl py-2 mb-3 mx-auto w-96 mt-20 text-black bg-white rounded-b-3xl'> ADD ITEM </h1> 
       <div className='flex flex-col w-full items-center bg-white rounded-2xl p-5'>
         <form className='flex flex-col items-center'>
-          {inputFields.map(({labelId, fieldId, labelFor, labText, inpType}, index) => 
+          {inputFields.map(({labelFor, labText, inpType}, index) => 
           (
             <div className="grid" key={index}>
               <label className='mt-2' htmlFor={labelFor}> {labText} </label>

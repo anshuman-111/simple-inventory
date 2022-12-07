@@ -40,10 +40,10 @@ const Navbar = () => {
 
   return (
     <div className='flex items-center justify-between 
-    h-20 w-screen px-4 z-10 top-0 text-white fixed bg-black'>
+    h-20 w-screen px-4 z-10 top-0 text-white sticky bg-black'>
             <h1 className="text-5xl mt-0.3 ml-1"> InvBuddy </h1>
 
-        <ul className='hidden md:flex'>
+        <ul className='hidden md:flex md:text-xl'>
             {links.map(({id, link, url}) => (
                 <li key={id} onClick={()=> (viewPage({url}))} className='px-4 py-7 cursor-pointer hover:scale-105 h-20 w-auto align-middle hover:bg-emerald-400 duration-200 hover:text-black text-white'>{link}</li>
             ))}
@@ -56,7 +56,7 @@ const Navbar = () => {
         {nav && (
             <ul className='flex flex-col justify-center items-center absolute bg-white top-0 left-0 w-full h-screen text-white'>
             {links.map(({id, link, url}) => (
-                <li key={id} onClick={()=> (viewPage({url}))} className='bg-slate-800 rounded-2xl w-96 cursor-pointer py-4 my-8 px-4 text-4xl text-center hover:scale-110 duration-200'>{link}</li>
+                <li key={id} onClick={()=> (viewPage({url}))} className='bg-slate-800 rounded-2xl w-80 cursor-pointer py-2 my-6 px-2 text-xl text-center hover:scale-110 duration-200'>{link}</li>
             ))}
         </ul>
 
