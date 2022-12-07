@@ -43,49 +43,131 @@ const tableHeaders = [
     h_name: 'Modify'
   },
 ]
+
+
+
+const [data, setData] = useState({})
+
+const [editModalData, setEditData] = useState({
+  item_id: 0,
+  item_name : "",
+  purchase_date : "",
+  purchase_price: 0,
+  quantity : 0,
+  quantity_sold : 0,
+  sell_price: 0,
+  sell_date: ""
+})
+const [delData, setDelData] = useState({
+  item_id: 0,
+  item_name: ""
+})
+
+const current = new Date();
+const today = `${current.getFullYear()}-${current.getMonth()+1}-${current.getDate()}`;
+
+
 const showData = [{
   id: 1,
-  labelFor: "item-name", 
+  labelFor: "item_name", 
   labText: "ITEM NAME: ",
   inpType: "text",
-  fetchedData: "from server"
+  fetchedData: editModalData['item_name']
 },
 {
   id: 2,
-  labelFor: "qty", 
+  labelFor: "quantity", 
   labText: "QUANTITY: ",
   inpType: "number",
-  fetchedData: " from server"
+  min: 0,
+  max: 99999,
+  fetchedData: editModalData['quantity']
 },
 {
   id: 3,
-  labelFor: "pur-price", 
+  labelFor: "purchase_price", 
   labText: "PURCHASE PRICE: ",
   inpType: "number",
-  fetchedData: " from server"
+  min: 0,
+  fetchedData: editModalData['purchase_price']
 },
 {
   id: 4,
-  labelFor: "pur-price", 
+  labelFor: "purchase_date", 
   labText: "PURCHASE DATE: ",
   inpType: "date",
-  fetchedData: " from server"
+  min: '1997-01-01',
+  max: today,
+  fetchedData: editModalData['purchase_date']
 },
 {
   id: 5,
-  labelFor: "sell-date",
-  labText: "DATE OF SALE: ",
-  inptType: "date",
-  fetchedData: " from server"
+  labelFor: "quantity_sold", 
+  labText: "QUANTITY SOLD: ",
+  inpType: "number",
+  min: 0,
+  max: 99999,
+  fetchedData: editModalData['quantity_sold']
 },
 {
   id: 6,
-  labelFor: "sell-price",
+  labelFor: "sale_date",
+  labText: "DATE OF SALE: ",
+  inpType: "date",
+  min: '1997-01-01',
+  max: today,
+  fetchedData: editModalData['sell_date']
+},
+{
+  id: 7,
+  labelFor: "selling_price",
   labText: "SELLING PRICE: ",
   inptType: "number",
-  fetchedData: " from server"
-},
+  min: 0,
+  fetchedData: editModalData['sell_price']
+}
 ]
+
+const formChangeHandler = (event) => {
+  event.preventDefault()
+
+  const inputName = event.target.getAttribute('id')
+  const inputValue = event.target.value
+
+  const formData = {...data}
+
+  console.log(formData)
+  formData[inputName] = inputValue
+  setData(formData)
+}
+
+
+const formSubmitHandler = (event) => {
+  event.preventDefault()
+  const itemID = editModalData['item_id']
+  data['item_id'] = itemID
+  if (Object.keys(data).length > 1){
+    fetch("/edit_item", {method : "POST", body: JSON.stringify(data), 
+    headers: {"content-type": "application/json"},})
+    .then((res) => {
+      if (!res.ok) return Promise.reject(res);
+      setData({})
+      setEditModal(false)
+      setTimeout(()=>{
+        window.open('/view','_self','noreferrer','noopener')
+      },500)
+      console.log("SENT TO SERVER")
+      return res.json();
+    }).then((data) => {
+      console.log(data)
+    }).catch(console.error)
+  }else{
+    document.getElementById("msg").innerHTML = " Atleast one change is required !"
+  }
+};
+
+
+
 
 const [rows, setRows] = useState([{}])
 
@@ -115,7 +197,16 @@ const Row = (props) => {
               <td>{row.quantity_sold}</td>
               <td>{row.sell_date}</td>
               <td className='flex flex-row items-center justify-center'>
-                <button onClick={()=>setEditModal(true)}
+                <button onClick={()=>{setEditModal(true); setEditData({
+                  item_id: row.item_id,
+                  item_name : row.item_name,
+                  purchase_date : row.purchase_date,
+                  purchase_price: row.purchase_price,
+                  quantity : row.quantity,
+                  quantity_sold : row.quantity_sold,
+                  sell_price: row.sell_price,
+                  sell_date: row.sell_date
+                })}}
                 className='mr-1 hover:bg-emerald-700 hover:cursor-pointer rounded-xl duration-300 p-3'>{ <FiEdit3 size={20}/>}</button> 
                 <button onClick={()=>{setDelModal(true); setIdx(index); setDelData({item_id:row.item_id, item_name:row.item_name})}} 
                 className='ml-1 mr-2 hover:bg-red-600 hover:cursor-pointer rounded-xl duration-300 p-3'>{<ImBin2 size={20}/>}</button> 
@@ -134,7 +225,7 @@ const Table = (props) => {
           <thead>
             <tr>
               {tableHeaders.map(({id, h_name, style}) => (
-                <th className='md:text-xl text-md px-3 border-2 z-8 sticky' style={{position : style}} key={id}>{h_name}</th>
+                <th className='md:text-md sm:text-md px-3 border-2 z-8' style={{position : {style}}} key={id}>{h_name}</th>
               ))}
             </tr>
           </thead>
@@ -148,27 +239,10 @@ const Table = (props) => {
 }
 
 
-/* const [editModalDate, setModalData] = useState([{
-  item_id : "",
-  item_name : "",
-  purchase_date : "",
-  purchase_price: "",
-  quantity : "",
-  quantity_sold : "",
-  sell_price: "",
-  sell_date: ""
-}])
-
-
- */
-
 const [showEditModal, setEditModal] = useState(false)
 const [showDelModal, setDelModal] = useState(false)
 const [idxData, setIdx] = useState()
-const [delData, setDelData] = useState({
-  item_id: 0,
-  item_name: ""
-})
+
 
 const deleteRow = (idx) => {
   var dpRow = [...rows]
@@ -198,7 +272,7 @@ const deleteRow = (idx) => {
 }
 
   return (
-    <div className='absolute'>
+    <div className='flex flex-col items-center w-screen h-auto overflow-hidden overflow-x-auto'>
       {showEditModal ? (
             <>
             <div
@@ -212,11 +286,6 @@ const deleteRow = (idx) => {
                   <h3 className="text-3xl font-semibold">
                     Edit Item
                   </h3>
-                  <button
-                    className="p-1 ml-auto bg-transparent border-0 text-black opacity-5 float-right text-3xl leading-none font-semibold outline-none focus:outline-none"
-                    onClick={() => setEditModal(false)}
-                  >
-                  </button>
                 </div>
                 {/*body*/}
                 
@@ -224,20 +293,21 @@ const deleteRow = (idx) => {
                 <div className="grid sm:grid-cols-2 grid-cols-1 gap-10">
                   <div>
                   <form className='flex flex-col items-start bg-white rounded-2xl p-1'>
-                    {showData.map(({id, labelFor, labText, inpType}) => 
+                  <input className='hidden' value={editModalData['item_id']} type='number' name='item_id' id='item_id'/>
+                    {showData.map(({id, labelFor, labText, inpType, min, max}) => 
                     (
                       <span className="grid grid-cols-2 md:grid-cols-1 sm:grid-cols-1">
-                      <label key={id} className='w-auto md:text-md text-sm ml-2' htmlFor={labelFor}> NEW {labText} </label>
-                      <input required className=' flex-end m-1 p-2 bg-slate-300 rounded-md border-4 w-48 border-black' type={inpType} name={labelFor} id={labelFor} />
+                      <label key={id} className='w-auto md:text-md text-md ml-2' htmlFor={labelFor}> NEW {labText} </label>
+                      <input required placeholder="No change" className=' flex-end m-1 p-2 bg-slate-300 rounded-md border-4 w-48 text-sm placeholder-red-400 border-black' type={inpType} name={labelFor} id={labelFor} onChange={formChangeHandler} min={min} max={max}/>
                       </span>
                     ))}
                   </form>
                   </div>
                   <div className='inline-block bg-gray-900 rounded-3xl px-2 py-2'>
-                  {showData.map(({id, labelFor, labText, fetchedData}) => 
+                  {showData.map(({labText, fetchedData}) => 
                     (
                       <div className="ml-2 mt-2 justify-center text-center text-white h-auto">
-                        <p id="item-name-show" className=" text-sm md:text-md sm:text-sm py-3" >CURRENT {labText} </p>
+                        <p className=" text-sm md:text-md sm:text-sm py-3" >CURRENT {labText} </p>
                         <p className="text-red-600">{fetchedData}</p>
                       </div>
                     ))}
@@ -246,20 +316,22 @@ const deleteRow = (idx) => {
                 </div>
                 {/*footer*/}
                 <div className="flex items-center justify-end p-6 border-t border-solid border-slate-200 rounded-b">
+                <p id='msg' className='text-sm text-red-500 font-bold mr-5'></p>
                   <button
                     className='bg-red-800 mr-4 px-5 py-3 border-2 border-black rounded-3xl hover:scale-110 hover:bg-red-400 hover:text-black duration-300 text-white'
-                    type="button" onClick={() => setEditModal(false)}
+                    type="button" onClick={() => {setEditModal(false); setEditData({}); setData({})}}
                   >
                     Close
                   </button>
                   <button
                     type="button"
                     className='bg-black p-3 border-2 border-black rounded-3xl hover:scale-110 hover:bg-green-400 hover:text-black duration-300 text-white'
-                    onClick={() => setEditModal(false)}
+                    onClick={formSubmitHandler}
                   >
                     Save Changes
                   </button>
                 </div>
+                    
               </div>
             </div>
           </div>
@@ -279,14 +351,14 @@ const deleteRow = (idx) => {
                 
                 <div className="flex items-start justify-between p-5 border-b border-solid border-slate-200 rounded-t">
                   <h3 className="text-3xl font-semibold">
-                    Delete Item {}
+                    Delete Item {delData['item_id']}
                   </h3>
                   
                 </div>
                 {/*body*/}
                 
                 <div className="m-4 px-3 text-2xl">
-                  <p>Are you sure you want to delete INSERT ITEM NAME ?</p>
+                  <p>Are you sure you want to delete {delData['item_name']} ?</p>
                 </div>
                 {/*footer*/}
                 <div className="flex items-center justify-end p-6 border-t border-solid border-slate-200 rounded-b">
@@ -310,7 +382,7 @@ const deleteRow = (idx) => {
           <div className="opacity-25 fixed inset-0 z-40 bg-black"></div>
         </>
           ) : null}
-      <div className='mt-40 mx-4 overflow-hidden overflow-x-auto md:w-fit w-96 bg-gray-100 text-black rounded-t-3xl rounded-b-3xl p-6'>
+      <div className='mt-40 mx-2 overflow-hidden overflow-x-auto lg:w-fit md:w-fit w-5/6 bg-gray-100 text-black rounded-t-3xl rounded-b-3xl p-6'>
         <Table data = {rows} 
           delRow = {deleteRow}
         />

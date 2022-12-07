@@ -3,11 +3,18 @@ import React, { useState } from 'react'
 
 
 const AddItems = () => {
+
+  const current = new Date();
+  const today = `${current.getFullYear()}-${current.getMonth()+1}-${current.getDate()}`;
+
   const [data, setData] = useState({
-    itemName : "",
-    qty: 0,
-    purPrice:0,
-    purDate: "",
+    item_name : "",
+    quantity: 0,
+    purchase_price:0,
+    purchase_date: "",
+    sell_price: 0,
+    quantity_sold: 0,
+    sell_date: ""
   })
 
 
@@ -50,40 +57,71 @@ const AddItems = () => {
 
 
   const inputFields = [{
-    labelFor: "itemName", 
+    id: 1,
+    labelFor: "item_name", 
     labText: "ITEM NAME: ",
-    inpType: "text"
+    inpType: "text",
   },
   {
-    labelFor: "qty", 
-    labText: "QUANTITY PURCHASED: ",
-    inpType: "number"
+    id: 2,
+    labelFor: "quantity", 
+    labText: "QUANTITY: ",
+    inpType: "number",
+    min: 0,
+    max: 99999,
   },
   {
-    labelFor: "purPrice", 
+    id: 3,
+    labelFor: "purchase_price", 
     labText: "PURCHASE PRICE: ",
-    inpType: "number"
+    inpType: "number",
+    min: 0,
   },
   {
-    labelFor: "purDate", 
+    id: 4,
+    labelFor: "purchase_date", 
     labText: "PURCHASE DATE: ",
-    inpType: "date"
+    inpType: "date",
+    min: '1997-01-01',
+    max: today,
   },
-  
-]
+  {
+    id: 5,
+    labelFor: "quantity_sold", 
+    labText: "QUANTITY SOLD: ",
+    inpType: "number",
+    min: 0,
+    max: 99999,
+  },
+  {
+    id: 6,
+    labelFor: "sale_date",
+    labText: "DATE OF SALE: ",
+    inpType: "date",
+    min: '1997-01-01',
+    max: today,
+  },
+  {
+    id: 7,
+    labelFor: "selling_price",
+    labText: "SELLING PRICE: ",
+    inptType: "number",
+    min: 0,
+  }
+  ]
 
 
 
   return (
-    <div>
-      <h1 className='text-center text-2xl md:text-4xl py-2 mb-3 mx-auto w-96 mt-20 text-black bg-white rounded-b-3xl'> ADD ITEM </h1> 
-      <div className='flex flex-col w-full items-center bg-white rounded-2xl p-5'>
+    <div className='flex flex-col items-center'>
+      <h1 className='text-center text-lg md:text-2xl py-2 mb-3 mx-auto w-96 text-black bg-white rounded-b-3xl'> ADD ITEM </h1> 
+      <div className=' w-fit h-fit bg-white rounded-2xl p-5'>
         <form className='flex flex-col items-center'>
-          {inputFields.map(({labelFor, labText, inpType}, index) => 
+          {inputFields.map(({labelFor, labText, inpType, min, max}, index) => 
           (
-            <div className="grid" key={index}>
-              <label className='mt-2' htmlFor={labelFor}> {labText} </label>
-              <input required className='my-2 px-4 py-2 bg-slate-300 rounded-md md:w-96 sm:w-48 border-4 border-black' type={inpType} name={labelFor} id={labelFor} onChange={formChangeHandler}/>
+            <div className="flex flex-row" key={index}>
+              <label className='w-36 md:w-15 sm:w-15 lg:w-36 mt-4 mr-1 sm:mr-4 md:mr-6 lg:mr-6' htmlFor={labelFor}> {labText} </label>
+              <input aria-label={labText} required min={min} max={max} className='ml-0 lg:ml-6 md:ml-4 sm:ml-0 my-2 px-4 py-1 bg-slate-300 rounded-md w-36 md:w-48 sm:w-36 border-2 border-black' type={inpType} name={labelFor} id={labelFor} onChange={formChangeHandler}/>
             </div>
           ))}
           

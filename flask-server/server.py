@@ -32,17 +32,12 @@ cursor.execute('''CREATE TABLE IF NOT EXISTS purchase (
     quantity INT,
     purchase_price FLOAT(8,2),
     purchase_date DATE,
-    PRIMARY KEY (item_id));
-    ''')
-
-cursor.execute('''CREATE TABLE IF NOT EXISTS sales (
-    item_id INT NOT NULL AUTO_INCREMENT,
-    item_name VARCHAR(255) NOT NULL,
     quantity_sold INT,
     selling_price FLOAT(8,2),
     sale_date DATE,
     PRIMARY KEY (item_id));
-    ''')    
+    ''')
+
 db.commit()
 
 # Add Item route
@@ -54,10 +49,11 @@ def add():
 
     #SQL Query to add data to DB
     insert_query = ''' 
-        INSERT INTO purchase(item_name,quantity,purchase_price,purchase_date) 
-        VALUES ('%s','%s', '%s', '%s') ''' % (res['itemName'],res['qty'],res['purPrice'],res['purDate'])
+        INSERT INTO purchase(item_name,quantity,purchase_price,purchase_date,sale_date,selling_price,quantity_sold) 
+        VALUES ('%s','%s', '%s', '%s', '%s', '%s', '%s') ''' % (res['item_name'],res['quantity'],res['purchase_price'],res['purchase_date'], res['sale_date'],res['selling_price'],res['quantity_sold'])
     cursor.execute(insert_query)
     db.commit()
+    print(res)
     return "Added to DB"
 
 # Delete Item route
@@ -67,6 +63,7 @@ def del_item():
     cursor = db.cursor()
     delete_query = ''' DELETE FROM purchase WHERE item_id='%s' AND item_name='%s' ''' % (res['item_id'], res['item_name'])
     cursor.execute(delete_query)
+    db.commit()
     print(res)
     return "OK"
 
@@ -75,6 +72,26 @@ def sale():
     res = request.json
     return res
 
+@app.route('/edit_item', methods=["POST"])
+def edit():
+    res = request.json
+    item_id_pop = res.pop('item_id')
+    cursor = db.cursor()
+    for k,v in res.items():
+        if v.isnumeric():
+            edit_query = ''' UPDATE purchase
+                    SET %s=%s
+                    WHERE item_id=%s
+            ''' % (k,v,item_id_pop)
+            cursor.execute(edit_query)
+        else:
+            edit_query = ''' UPDATE purchase
+                    SET %s='%s'
+                    WHERE item_id=%s
+            ''' % (k,v,item_id_pop)
+            cursor.execute(edit_query)
+    db.commit()
+    return res
 
 # Dashboard route
 @app.route('/home')
@@ -88,5 +105,8 @@ def view():
     cursor.execute('SELECT * FROM purchase')
     data = cursor.fetchall()
     return json.dumps(data, sort_keys=True, default=str)
+
+
+
 if __name__ == "__main__":
     app.run(debug=True)

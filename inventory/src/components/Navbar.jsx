@@ -43,13 +43,13 @@ const Navbar = () => {
     h-20 w-screen px-4 z-10 top-0 text-white sticky bg-black'>
             <h1 className="text-5xl mt-0.3 ml-1"> InvBuddy </h1>
 
-        <ul className='hidden md:flex md:text-xl'>
+        <ul className='hidden md:hidden sm:hidden lg:flex md:text-xl'>
             {links.map(({id, link, url}) => (
                 <li key={id} onClick={()=> (viewPage({url}))} className='px-4 py-7 cursor-pointer hover:scale-105 h-20 w-auto align-middle hover:bg-emerald-400 duration-200 hover:text-black text-white'>{link}</li>
             ))}
         </ul>
 
-        <div onClick={()=> setNav(!nav)} className='cursor-pointer pr-4 z-10 text-gray-500 md:hidden'>
+        <div onClick={()=> setNav(!nav)} className='cursor-pointer pr-4 z-10 text-gray-500 lg:hidden'>
             {nav ? <FaTimes size={30}/> : <FaBars size={30} />}
         </div>
 
