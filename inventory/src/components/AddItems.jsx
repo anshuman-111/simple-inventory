@@ -12,9 +12,9 @@ const AddItems = () => {
     quantity: 0,
     purchase_price:0,
     purchase_date: "",
-    sell_price: 0,
+    selling_price: 0,
     quantity_sold: 0,
-    sell_date: ""
+    sale_date: ""
   })
 
 

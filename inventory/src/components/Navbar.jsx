@@ -24,15 +24,6 @@ const Navbar = () => {
         {   id : 3,
             link: "Add Items",
             url: "/add"
-        },
-        {   id : 4,
-            link: "Edit Items",
-            url: "/edit"
-        },
-        {
-            id : 5,
-            link: "Record Sale",
-            url: "/sale"
         }
     ]
 
@@ -56,7 +47,7 @@ const Navbar = () => {
         {nav && (
             <ul className='flex flex-col justify-center items-center absolute bg-white top-0 left-0 w-full h-screen text-white'>
             {links.map(({id, link, url}) => (
-                <li key={id} onClick={()=> (viewPage({url}))} className='bg-slate-800 rounded-2xl w-80 cursor-pointer py-2 my-6 px-2 text-xl text-center hover:scale-110 duration-200'>{link}</li>
+                <li key={id} onClick={()=> (viewPage({url}))} className='bg-slate-800 rounded-2xl lg:w-96 w-80 cursor-pointer py-5 my-6 px-4 text-xl text-center hover:scale-110 duration-200'>{link}</li>
             ))}
         </ul>
 

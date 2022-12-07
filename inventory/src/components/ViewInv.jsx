@@ -55,8 +55,8 @@ const [editModalData, setEditData] = useState({
   purchase_price: 0,
   quantity : 0,
   quantity_sold : 0,
-  sell_price: 0,
-  sell_date: ""
+  selling_price: 0,
+  sale_date: ""
 })
 const [delData, setDelData] = useState({
   item_id: 0,
@@ -193,9 +193,9 @@ const Row = (props) => {
               <td>{row.quantity}</td>
               <td>{row.purchase_price}</td>
               <td>{row.purchase_date}</td>
-              <td>{row.sell_price}</td>
+              <td>{row.selling_price}</td>
               <td>{row.quantity_sold}</td>
-              <td>{row.sell_date}</td>
+              <td>{row.sale_date}</td>
               <td className='flex flex-row items-center justify-center'>
                 <button onClick={()=>{setEditModal(true); setEditData({
                   item_id: row.item_id,
@@ -204,8 +204,8 @@ const Row = (props) => {
                   purchase_price: row.purchase_price,
                   quantity : row.quantity,
                   quantity_sold : row.quantity_sold,
-                  sell_price: row.sell_price,
-                  sell_date: row.sell_date
+                  selling_price: row.selling_price,
+                  sale_date: row.sale_date
                 })}}
                 className='mr-1 hover:bg-emerald-700 hover:cursor-pointer rounded-xl duration-300 p-3'>{ <FiEdit3 size={20}/>}</button> 
                 <button onClick={()=>{setDelModal(true); setIdx(index); setDelData({item_id:row.item_id, item_name:row.item_name})}} 
@@ -225,7 +225,7 @@ const Table = (props) => {
           <thead>
             <tr>
               {tableHeaders.map(({id, h_name, style}) => (
-                <th className='md:text-md sm:text-md px-3 border-2 z-8' style={{position : {style}}} key={id}>{h_name}</th>
+                <th className='md:text-lg lg:text-xl px-3 border-2 z-8' style={{position : {style}}} key={id}>{h_name}</th>
               ))}
             </tr>
           </thead>
@@ -382,7 +382,7 @@ const deleteRow = (idx) => {
           <div className="opacity-25 fixed inset-0 z-40 bg-black"></div>
         </>
           ) : null}
-      <div className='mt-40 mx-2 overflow-hidden overflow-x-auto lg:w-fit md:w-fit w-5/6 bg-gray-100 text-black rounded-t-3xl rounded-b-3xl p-6'>
+      <div className='mt-40 mx-2 overflow-hidden overflow-x-auto lg:w-auto w-11/12 bg-gray-100 text-black rounded-t-3xl rounded-b-3xl p-6'>
         <Table data = {rows} 
           delRow = {deleteRow}
         />
