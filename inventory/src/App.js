@@ -5,6 +5,7 @@ import AddItems from './components/AddItems';
 import EditItems from './components/EditItems';
 import Navbar from './components/Navbar';
 import Dashboard from './components/Dashboard';
+import Sales from './components/Sales';
 
 function App() {
 
@@ -20,6 +21,7 @@ function App() {
         <Route path='/view' element={<ViewInv />}/>
         <Route path='/add' element={<AddItems />}/>
         <Route path='/edit' element={<EditItems />}/>
+        <Route path='/sale' element={<Sales />}/>
       </Routes>
     </div>
     </div>

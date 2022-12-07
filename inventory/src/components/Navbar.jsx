@@ -29,6 +29,11 @@ const Navbar = () => {
             link: "Edit Items",
             url: "/edit"
         },
+        {
+            id : 5,
+            link: "Record Sale",
+            url: "/sale"
+        }
     ]
 
 
