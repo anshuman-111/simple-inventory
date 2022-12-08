@@ -21,7 +21,7 @@ user_aws=os.getenv('AWSRDS_USER')
 # Connecting to AWS DB Instance
 
 db = pymysql.connect(host='database-1.c5jdmaeqpbra.ap-southeast-2.rds.amazonaws.com', user='admin', password='root5337',cursorclass=pymysql.cursors.DictCursor)
-
+db.ping()
 # Initializing DB cursor
 cursor = db.cursor()
 cursor.execute('use inventory')
@@ -61,6 +61,7 @@ def add():
 def del_item():
     res = request.json
     cursor = db.cursor()
+    db.ping()
     delete_query = ''' DELETE FROM purchase WHERE item_id='%s' AND item_name='%s' ''' % (res['item_id'], res['item_name'])
     cursor.execute(delete_query)
     db.commit()
@@ -76,6 +77,7 @@ def sale():
 def edit():
     res = request.json
     item_id_pop = res.pop('item_id')
+    db.ping()
     cursor = db.cursor()
     for k,v in res.items():
         if v.isnumeric():
@@ -102,6 +104,7 @@ def home():
 @app.route('/get_all')
 def view():
     cursor = db.cursor()
+    db.ping()
     cursor.execute('SELECT * FROM purchase')
     data = cursor.fetchall()
     return json.dumps(data, sort_keys=True, default=str)

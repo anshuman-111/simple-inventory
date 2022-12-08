@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 
 
 const AddItems = () => {
-
+  const [formOK, setFormOK] = useState(false)
   const current = new Date();
   const today = `${current.getFullYear()}-${current.getMonth()+1}-${current.getDate()}`;
 
@@ -24,22 +24,49 @@ const AddItems = () => {
     const inputName = event.target.getAttribute('id')
     const inputValue = event.target.value;
 
+
+    
     const formData = {...data}
     formData[inputName] = inputValue;
+
+    const msg = document.getElementById('msg')
+  const saveBtn = document.getElementById('save-button')
+  formData[inputName] = inputValue
+  var sale_date = new Date(formData['sale_date'])
+  var purchase_date = new Date(formData['purchase_date'])
+
+  if (formData['sale_date'] && formData['purchase_date'] && sale_date < purchase_date){ 
+      setFormOK(false)
+      msg.innerHTML = "Sale date cannot be before purchase date"
+      msg.style = 'color: red; font-weight: bold;'
+      saveBtn.disabled = true;
+      console.log(sale_date,purchase_date)
+
+  }else if (formData['quantity'] && formData['quantity_sold'] && 
+  formData['quantity_sold'] > formData['quantity']){
+    setFormOK(false)
+    saveBtn.disabled = true;
+    msg.innerHTML = "Quantity sold must not be greater than Quantity purchased"
+    console.log(formData['quantity'], formData['quantity_sold'])
+
+  } else{
+      msg.innerHTML = ""
+      saveBtn.disabled = false;
+  }
     setData(formData)
   }
 
 
   const formSubmitHandler = (event) => {
     event.preventDefault()
-    if (data){
+    if (formOK){
       fetch("/add_item", {method : "POST", body: JSON.stringify(data), 
       headers: {"content-type": "application/json"},})
       .then((res) => {
         if (!res.ok) return Promise.reject(res);
-        const msg = document.getElementById('conf-msg')
+        const msg = document.getElementById('msg')
         msg.style = "color: green; font-weight: bold;"
-        document.getElementById('conf-msg').innerHTML = "ITEM ADDED SUCCESSFULLY"
+        document.getElementById('msg').innerHTML = "ITEM ADDED SUCCESSFULLY"
         setTimeout(()=>{
           window.open('/view','_self','noreferrer','noopener')
         },500)
@@ -49,7 +76,7 @@ const AddItems = () => {
         console.log(data)
       }).catch(console.error)
     }else{
-      const msg = document.getElementById('conf-msg')
+      const msg = document.getElementById('msg')
       msg.style = "color: red; font-weight: bold;"
       msg.innerHTML = " MISSING ITEM DETAILS! "
     }
@@ -114,8 +141,8 @@ const AddItems = () => {
 
   return (
     <div className='flex flex-col items-center'>
-      <h1 className='text-center text-lg md:text-2xl py-2 mb-3 mx-auto w-96 text-black bg-white rounded-b-3xl'> ADD ITEM </h1> 
-      <div className=' w-fit h-fit bg-white rounded-2xl p-5'>
+      <h1 className='text-2xl md:text-2xl py-2 text-center mb-3 mx-auto w-96 text-black bg-white rounded-b-3xl'> ADD ITEM </h1> 
+      <div className='w-auto h-auto bg-white rounded-2xl p-5'>
         <form className='flex flex-col items-center'>
           {inputFields.map(({labelFor, labText, inpType, min, max}, index) => 
           (
@@ -125,11 +152,11 @@ const AddItems = () => {
             </div>
           ))}
           
-          <button value="ADD ITEM" onClick={formSubmitHandler} 
+          <button value="ADD ITEM" id='save-button' onClick={formSubmitHandler} 
           className='border-4 border-black bg-black hover:bg-green-400 hover:scale-105 duration-300 p-5 m-5 sm:w-48 md:w-64 rounded-3xl text-white hover:text-black'> ADD ITEM </button>
         </form>
 
-        <p id="conf-msg"></p>
+        <p className='text-center' id="msg">  </p>
 
       </div>
     </div>

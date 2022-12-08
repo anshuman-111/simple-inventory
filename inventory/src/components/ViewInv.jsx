@@ -62,7 +62,7 @@ const [delData, setDelData] = useState({
   item_id: 0,
   item_name: ""
 })
-
+const [formOK, setFormOK] = useState(false)
 const current = new Date();
 const today = `${current.getFullYear()}-${current.getMonth()+1}-${current.getDate()}`;
 
@@ -116,7 +116,7 @@ const showData = [{
   inpType: "date",
   min: '1997-01-01',
   max: today,
-  fetchedData: editModalData['sell_date']
+  fetchedData: editModalData['sale_date']
 },
 {
   id: 7,
@@ -124,7 +124,7 @@ const showData = [{
   labText: "SELLING PRICE: ",
   inptType: "number",
   min: 0,
-  fetchedData: editModalData['sell_price']
+  fetchedData: editModalData['selling_price']
 }
 ]
 
@@ -136,8 +136,27 @@ const formChangeHandler = (event) => {
 
   const formData = {...data}
 
-  console.log(formData)
+  
+  const msg = document.getElementById('msg')
+  const saveBtn = document.getElementById('save-button')
   formData[inputName] = inputValue
+  var sale_date = new Date(formData['sale_date'])
+  var purchase_date = new Date(formData['purchase_date'])
+  if (formData['sale_date'] && formData['purchase_date'] && sale_date < purchase_date){ 
+      setFormOK(false)
+      msg.innerHTML = "Sale date cannot be before purchase date"
+      saveBtn.disabled = true;
+      console.log(sale_date,purchase_date)
+  
+
+  } else if (formData['quantity'] && formData['quantity_sold'] && formData['quantity'] < formData['quantity_sold']){
+    setFormOK(false)
+    saveBtn.disabled = true;
+    msg.innerHTML = "Quantity sold cannot be greater than Quantity purchased"
+  } else{
+      msg.innerHTML = ""
+      saveBtn.disabled = false;
+  }
   setData(formData)
 }
 
@@ -146,7 +165,7 @@ const formSubmitHandler = (event) => {
   event.preventDefault()
   const itemID = editModalData['item_id']
   data['item_id'] = itemID
-  if (Object.keys(data).length > 1){
+  if (Object.keys(data).length > 1 && formOK){
     fetch("/edit_item", {method : "POST", body: JSON.stringify(data), 
     headers: {"content-type": "application/json"},})
     .then((res) => {
@@ -256,7 +275,7 @@ const deleteRow = (idx) => {
       if (!res.ok) return Promise.reject(res);
       const msg = document.getElementById('conf-msg')
       msg.style = "color: green; font-weight: bold;"
-      document.getElementById('conf-msg').innerHTML = "ITEM DELETED SUCCESSFULLY"
+      document.getElementById('msg').innerHTML = "ITEM DELETED SUCCESSFULLY"
       
       console.log("SENT TO SERVER")
       return res.json();
@@ -264,7 +283,7 @@ const deleteRow = (idx) => {
       console.log(data)
     }).catch(console.error)
   }else{
-    const msg = document.getElementById('conf-msg')
+    const msg = document.getElementById('msg')
     msg.style = "color: red; font-weight: bold;"
     msg.innerHTML = " MISSING ITEM DETAILS! "
   }
@@ -276,11 +295,11 @@ const deleteRow = (idx) => {
       {showEditModal ? (
             <>
             <div
-            className="justify-center items-start flex  overflow-y-auto fixed inset-0 z-50"
+            className="justify-center h-full sm:text-sm md:text-md items-start flex overflow-y-auto fixed inset-0 z-50"
           >
-            <div className="absolute max-w-screen-2xl my-6 mx-auto text-black">
+            <div className="relative max-w-screen-2xl my-6 text-black">
               
-              <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
+              <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full md:w-11/12 sm:w-10/12 lg:w-auto bg-white outline-none focus:outline-none">
                 
                 <div className="flex items-start justify-between p-5 border-b border-solid border-slate-200 rounded-t">
                   <h3 className="text-3xl font-semibold">
@@ -290,24 +309,24 @@ const deleteRow = (idx) => {
                 {/*body*/}
                 
                 <div className="relative p-6 flex-auto">
-                <div className="grid sm:grid-cols-2 grid-cols-1 gap-10">
-                  <div>
-                  <form className='flex flex-col items-start bg-white rounded-2xl p-1'>
+                <div className="grid lg:grid-cols-2 items-center md:grid-cols-1 sm:grid-cols-1 gap-2">
+                  <div className='ml-2'>
+                  <form className='flex flex-col items-center bg-white rounded-2xl p-1'>
                   <input className='hidden' value={editModalData['item_id']} type='number' name='item_id' id='item_id'/>
                     {showData.map(({id, labelFor, labText, inpType, min, max}) => 
                     (
-                      <span className="grid grid-cols-2 md:grid-cols-1 sm:grid-cols-1">
-                      <label key={id} className='w-auto md:text-md text-md ml-2' htmlFor={labelFor}> NEW {labText} </label>
-                      <input required placeholder="No change" className=' flex-end m-1 p-2 bg-slate-300 rounded-md border-4 w-48 text-sm placeholder-red-400 border-black' type={inpType} name={labelFor} id={labelFor} onChange={formChangeHandler} min={min} max={max}/>
+                      <span className="flex flex-row">
+                      <label key={id} className='mt-4 md:w-40 lg:w-48 w-36 md:text-md sm:text-sm text-sm -ml-3' htmlFor={labelFor}> NEW {labText} </label>
+                      <input required placeholder="No change" className=' flex-end m-1 p-2 bg-slate-300 rounded-md border-4 w-36 md:w-48 text-sm placeholder-red-400 border-black' type={inpType} name={labelFor} id={labelFor} onChange={formChangeHandler} min={min} max={max}/>
                       </span>
                     ))}
                   </form>
                   </div>
-                  <div className='inline-block bg-gray-900 rounded-3xl px-2 py-2'>
+                  <div className='mx-auto bg-gray-200 w-64 rounded-3xl px-2 py-2'>
                   {showData.map(({labText, fetchedData}) => 
                     (
-                      <div className="ml-2 mt-2 justify-center text-center text-white h-auto">
-                        <p className=" text-sm md:text-md sm:text-sm py-3" >CURRENT {labText} </p>
+                      <div className=" mt-1 justify-center text-center text-black h-auto">
+                        <p className=" text-sm md:text-md sm:text-sm py-1" >CURRENT {labText} </p>
                         <p className="text-red-600">{fetchedData}</p>
                       </div>
                     ))}
@@ -316,19 +335,20 @@ const deleteRow = (idx) => {
                 </div>
                 {/*footer*/}
                 <div className="flex items-center justify-end p-6 border-t border-solid border-slate-200 rounded-b">
-                <p id='msg' className='text-sm text-red-500 font-bold mr-5'></p>
+                  <p id='msg' className='text-sm w-28 sm:w-auto text-red-500 font-bold mr-20'></p>
                   <button
-                    className='bg-red-800 mr-4 px-5 py-3 border-2 border-black rounded-3xl hover:scale-110 hover:bg-red-400 hover:text-black duration-300 text-white'
+                    className='bg-red-800 mr-4 px-5 py-3 border-2 border-black rounded-3xl hover:scale-110 hover:bg-red-400 text-center w-20 hover:text-black duration-300 text-white'
                     type="button" onClick={() => {setEditModal(false); setEditData({}); setData({})}}
                   >
                     Close
                   </button>
                   <button
+                    id='save-button'
                     type="button"
                     className='bg-black p-3 border-2 border-black rounded-3xl hover:scale-110 hover:bg-green-400 hover:text-black duration-300 text-white'
                     onClick={formSubmitHandler}
                   >
-                    Save Changes
+                    Save
                   </button>
                 </div>
                     

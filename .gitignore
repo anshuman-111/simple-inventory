@@ -3,3 +3,5 @@ flask-server/__pycache__
 inventory/node_modules
 flask_server/cred.env
 inventory/src/components/hardcoded_table
+inventory/src/components/EditItems.jsx
+inventory/src/components/Sales.jsx
