@@ -142,7 +142,7 @@ const AddItems = () => {
 
   return (
     <div className='flex flex-col items-center'>
-      <h1 className='text-2xl md:text-2xl py-2 text-center mb-3 mx-auto w-96 text-black bg-white rounded-b-3xl'> ADD ITEM </h1> 
+      <h1 className='text-2xl md:text-2xl py-2 text-center mb-3 mx-auto w-80 md:w-96 text-black bg-white rounded-b-3xl'> ADD ITEM </h1> 
       <div className='w-auto h-auto bg-white rounded-2xl p-5'>
         <form className='flex flex-col items-center'>
           {inputFields.map(({labelFor, labText, inpType, min, max}, index) => 

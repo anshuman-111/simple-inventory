@@ -7,12 +7,11 @@ const tableHeaders = [
   {
     id: 1,
     h_name: 'Item ID',
-    style : 'sticky;'
+    style : 'rounded-tl-2xl'
   },
   {
     id: 2,
     h_name: 'Item Name',
-    style : 'sticky;'
   },
   {
     id: 3,
@@ -40,7 +39,8 @@ const tableHeaders = [
   },
   {
     id: 9,
-    h_name: 'Modify'
+    h_name: 'Modify',
+    style: 'rounded-tr-2xl'
   },
 ]
 
@@ -243,7 +243,7 @@ const Table = (props) => {
           <thead>
             <tr>
               {tableHeaders.map(({id, h_name, style}) => (
-                <th className='md:text-lg lg:text-xl px-3 border-2 z-8' style={{position : {style}}} key={id}>{h_name}</th>
+                <th className={'md:text-lg lg:text-xl px-3 w-max py-2 bg-black text-white top-12 z-10 ' + style } key={id}>{h_name}</th>
               ))}
             </tr>
           </thead>

@@ -12,7 +12,7 @@ function App() {
 
   return (
     <Router>
-    <div className='font-textMont fixed w-screen overflow-auto h-screen bg-stone-800'>
+    <div className='font-textMont fixed w-screen overflow-auto h-screen bg-backg bg-cover'>
     {<Navbar />}
       <Routes>
         <Route path='/dashboard' element={<Dashboard />}/>

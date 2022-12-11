@@ -67,6 +67,7 @@ const [barChartData] = [{
 }]
 
 const [lineChartData] = [{
+    type: 'horizontalBar',
     labels: lineData.map((inp)=> inp['month']),
     datasets: [{
         label: "Monthly Sales",
