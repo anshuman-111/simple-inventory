@@ -50,6 +50,7 @@ const AddItems = () => {
     console.log(formData['quantity'], formData['quantity_sold'])
 
   } else{
+      setFormOK(true)
       msg.innerHTML = ""
       saveBtn.disabled = false;
   }

@@ -154,6 +154,7 @@ const formChangeHandler = (event) => {
     saveBtn.disabled = true;
     msg.innerHTML = "Quantity sold cannot be greater than Quantity purchased"
   } else{
+    setFormOK(true)
       msg.innerHTML = ""
       saveBtn.disabled = false;
   }
@@ -165,6 +166,7 @@ const formSubmitHandler = (event) => {
   event.preventDefault()
   const itemID = editModalData['item_id']
   data['item_id'] = itemID
+  console.log(data)
   if (Object.keys(data).length > 1 && formOK){
     fetch("/edit_item", {method : "POST", body: JSON.stringify(data), 
     headers: {"content-type": "application/json"},})
@@ -178,7 +180,6 @@ const formSubmitHandler = (event) => {
       console.log("SENT TO SERVER")
       return res.json();
     }).then((data) => {
-      console.log(data)
     }).catch(console.error)
   }else{
     document.getElementById("msg").innerHTML = " Atleast one change is required !"
@@ -191,12 +192,10 @@ const formSubmitHandler = (event) => {
 const [rows, setRows] = useState([{}])
 
 useEffect(() => {
-  // Using fetch to fetch the api from 
-  // flask server it will be redirected to proxy
+  // Using fetch to fetch the api from flask server
   fetch("/get_all").then((res) =>
       res.json().then((data) => {
           // Setting a data from api
-          console.log(data)
           setRows(data);
       })
   );
@@ -291,18 +290,18 @@ const deleteRow = (idx) => {
 }
 
   return (
-    <div className='flex flex-col items-center w-screen h-auto overflow-hidden overflow-x-auto'>
+    <div className='flex relative flex-col items-center w-screen h-max bg-gray-100 overflow-hidden overflow-y-auto'>
       {showEditModal ? (
             <>
             <div
-            className="justify-center h-full sm:text-sm md:text-md items-start flex overflow-y-auto fixed inset-0 z-50"
+            className="justify-center h-full overflow-y-auto sm:text-sm md:text-md items-start flex fixed inset-2 z-50"
           >
             <div className="relative max-w-screen-2xl my-6 text-black">
               
-              <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full md:w-11/12 sm:w-10/12 lg:w-auto bg-white outline-none focus:outline-none">
+              <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full md:w-11/12 sm:w-11/12 lg:w-auto bg-white outline-none focus:outline-none">
                 
                 <div className="flex items-start justify-between p-5 border-b border-solid border-slate-200 rounded-t">
-                  <h3 className="text-3xl font-semibold">
+                  <h3 className="text-3xl ml-7 sm:ml-1 font-semibold">
                     Edit Item
                   </h3>
                 </div>
@@ -316,8 +315,8 @@ const deleteRow = (idx) => {
                     {showData.map(({id, labelFor, labText, inpType, min, max}) => 
                     (
                       <span className="flex flex-row">
-                      <label key={id} className='mt-4 md:w-40 lg:w-48 w-36 md:text-md sm:text-sm text-sm -ml-3' htmlFor={labelFor}> NEW {labText} </label>
-                      <input required placeholder="No change" className=' flex-end m-1 p-2 bg-slate-300 rounded-md border-4 w-36 md:w-48 text-sm placeholder-red-400 border-black' type={inpType} name={labelFor} id={labelFor} onChange={formChangeHandler} min={min} max={max}/>
+                      <label key={id} className='mt-4 md:w-40 lg:w-48 w-36 md:text-md sm:text-sm text-sm -ml-3 sm:ml-2' htmlFor={labelFor}> NEW {labText} </label>
+                      <input required placeholder="No change" className=' flex-end m-1 p-2 bg-slate-300 rounded-md border-4 sm:mr-2 w-36 md:w-48 text-sm placeholder-red-400 border-black' type={inpType} name={labelFor} id={labelFor} onChange={formChangeHandler} min={min} max={max}/>
                       </span>
                     ))}
                   </form>
@@ -345,7 +344,7 @@ const deleteRow = (idx) => {
                   <button
                     id='save-button'
                     type="button"
-                    className='bg-black p-3 border-2 border-black rounded-3xl hover:scale-110 hover:bg-green-400 hover:text-black duration-300 text-white'
+                    className='bg-black p-3 border-2 w-20 border-black rounded-3xl hover:scale-110 hover:bg-green-400 hover:text-black duration-300 text-white'
                     onClick={formSubmitHandler}
                   >
                     Save
@@ -363,7 +362,7 @@ const deleteRow = (idx) => {
       {showDelModal ? (
             <>
             <div
-            className="justify-center items-start flex  overflow-y-auto fixed inset-0 z-50"
+            className="justify-center items-start flex mt-40 overflow-y-auto fixed inset-0 z-50"
           >
             <div className="absolute w-96 my-6 mx-auto text-black">
               
@@ -402,7 +401,7 @@ const deleteRow = (idx) => {
           <div className="opacity-25 fixed inset-0 z-40 bg-black"></div>
         </>
           ) : null}
-      <div className='mt-40 mx-2 overflow-hidden overflow-x-auto lg:w-auto w-11/12 bg-gray-100 text-black rounded-t-3xl rounded-b-3xl p-6'>
+      <div className='mt-2 mx-0 overflow-hidden overflow-x-auto lg:w-auto w-11/12 bg-gray-100 text-black rounded-t-3xl rounded-b-3xl p-6'>
         <Table data = {rows} 
           delRow = {deleteRow}
         />

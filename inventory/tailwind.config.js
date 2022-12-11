@@ -9,7 +9,7 @@ module.exports = {
       textMont : 'Montserrat'
     },
     backgroundImage: {
-      backg : "url('./assets/bg.avif')"
+      backg : "url('./assets/bg.jpeg')"
     }
   },
   plugins: [],

@@ -12,15 +12,13 @@ function App() {
 
   return (
     <Router>
-    <div className='font-textMont bg-fixed w-screen h-screen bg-repeat bg-backg'>
-    <div className='h-screen w-screen backdrop-blur-lg'>
+    <div className='font-textMont fixed w-screen overflow-auto h-screen bg-stone-800'>
     {<Navbar />}
       <Routes>
         <Route path='/dashboard' element={<Dashboard />}/>
         <Route path='/view' element={<ViewInv />}/>
         <Route path='/add' element={<AddItems />}/>
       </Routes>
-    </div>
     </div>
     </Router>
   )
