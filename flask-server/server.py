@@ -9,6 +9,10 @@ from dotenv import load_dotenv
 # PyMySQL raises packet sequence error because it operates on a single thread.
 # Creating a connection pool
 
+
+
+# Connecting to AWS DB Instance
+
 pool = Pool(host='database-1.c5jdmaeqpbra.ap-southeast-2.rds.amazonaws.com',port=3306, user='admin',password='root5337',db='inventory', autocommit=True)
 pool.init()
 conn1 = pool.get_conn()
@@ -26,10 +30,6 @@ host_name=os.getenv('AWSRDS_HOST')
 pass_aws=os.getenv('AWSRDS_PASS')
 user_aws=os.getenv('AWSRDS_USER')
 
-
-# Connecting to AWS DB Instance
-""" 
-db = pymysql.connect(host='database-1.c5jdmaeqpbra.ap-southeast-2.rds.amazonaws.com', user='admin', password='root5337',cursorclass=pymysql.cursors.DictCursor) """
 # Initializing DB cursor
 cursor = conn1.cursor()
 
@@ -49,9 +49,9 @@ cursor.execute('''CREATE TABLE IF NOT EXISTS purchase (
     PRIMARY KEY (item_id));
     ''')
 
-
+pool.release(conn1)
 # Add Item route
-''' ITEM DATA IS POSTED FROM FRONTEND AND STORED IN MySQL DB instance on AWS RDS '''
+# ITEM DATA IS POSTED FROM FRONTEND AND STORED IN MySQL DB instance on AWS RDS
 @app.route('/add_item', methods=['POST'])
 def add():
     res = request.json
@@ -131,25 +131,43 @@ def stats():
     db = pool.get_conn()
     cursor = db.cursor()
    
-    data =[]
+    data =[{}]
     
-    cursor.execute('SELECT SUM(selling_price) as revenue FROM purchase')
-
-    data.append(cursor.fetchone())
-    
+    cursor.execute('SELECT SUM(selling_price*quantity_sold) as revenue FROM purchase')
+    data[0]['revenue'] = '{:,}'.format(cursor.fetchone()['revenue'])
+    data[0]['revenue'] = data[0]['revenue'][:-2]
     cursor.execute('''
     SELECT SUM(purchase_price*(quantity-quantity_sold)) as total_value 
     FROM purchase''')
 
-    data[0]['total_value'] = (cursor.fetchone()['total_value'])
-    pool.release(db)
+    data[0]['total_value'] = '{:,}'.format((cursor.fetchone()['total_value']))
+    data[0]['total_value'] = data[0]['total_value'][:-2]
 
+    cursor.execute('''
+    SELECT (SUM(selling_price*quantity_sold) - SUM(purchase_price*quantity_sold)) as profit FROM purchase
+    ''')
+    data[0]['profit'] = '{:,}'.format(cursor.fetchone()['profit'])
+    data[0]['profit'] = data[0]['profit'][:-2]
+    cursor.execute('''
+    SELECT AVG(DATEDIFF(sale_date,purchase_date)) as inv_days FROM purchase
+    ''')
+    data[0]['inv_days'] = cursor.fetchone()['inv_days']
+
+    cursor.execute('''
+        SELECT item_name FROM purchase ORDER BY quantity_sold DESC LIMIT 3;
+    ''')
+    data[0]['top_seller'] = cursor.fetchall()
+    
+
+
+    pool.release(db)
     return data
 
 @app.route('/stats_charts')
 def charts():
     db = pool.get_conn()
     cursor = db.cursor()
+
     cursor.execute(''' 
         SELECT item_name, SUM(quantity-quantity_sold) as qty_avail
         FROM purchase
@@ -157,17 +175,46 @@ def charts():
     ''')
     bardata = cursor.fetchall()
 
-    cursor.execute( ''' 
-    SELECT date_format(sale_date, '%M') as month, 
-    SUM(selling_price) AS sales 
-    FROM purchase 
-    GROUP BY month 
-    ORDER BY month(sale_date)''')
+    cursor.execute('''
 
+        SELECT date_format(sale_date, '%M') AS month, 
+        SUM(selling_price*quantity_sold) AS sales
+        FROM purchase 
+        GROUP BY month
+        ORDER BY month(sale_date);
+    ''')
+    bar_2_data = cursor.fetchall()
+
+    cursor.execute(''' 
+        SELECT date_format(sale_date, '%M') AS month, 
+        SUM((selling_price - purchase_price)*quantity_sold) AS profit 
+        FROM purchase 
+        GROUP BY month 
+        ORDER BY month(sale_date)
+    ''')
     linedata = cursor.fetchall()
+
+    cursor.execute('''
+    SELECT SUM((selling_price - purchase_price)*quantity_sold) as profit FROM purchase
+    ''')
+    result = cursor.fetchone()
+    profit = result['profit']
+    doughdata_query = '''
+        SELECT item_name, 
+        SUM((selling_price-purchase_price)*quantity_sold*100) / %s as perc  
+        FROM purchase 
+        WHERE selling_price-purchase_price > 0 
+        GROUP BY item_name 
+        ORDER BY (selling_price-purchase_price) DESC LIMIT 5;
+    ''' % (profit)
+    cursor.execute(doughdata_query)
+    doughdata = cursor.fetchall()
+
+
     pool.release(db)
-   
-    return [bardata, linedata]
+    print(doughdata)
+    print(profit)
+    return [bardata, bar_2_data, linedata, doughdata]
 
 
 

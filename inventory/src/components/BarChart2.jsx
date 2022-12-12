@@ -1,7 +1,7 @@
 import React from 'react'
 import { Bar } from 'react-chartjs-2'
 import {Chart as ChartJS} from 'chart.js/auto'
-const BarChart = ({barInput}) => {
+const BarChart2 = ({barInput}) => {
 
   return (
     <Bar data={barInput} width={400} height={400} options={{
@@ -9,11 +9,11 @@ const BarChart = ({barInput}) => {
         plugins: {
           title: {
             display: true,
-            text: "QUANTITY AVAILABLE IN STORE",
+            text: "MONTHLY SALES",
             align: "center"
           }}
       }}/>
   )
 }
 
-export default BarChart
+export default BarChart2
