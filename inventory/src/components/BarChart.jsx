@@ -8,6 +8,9 @@ const BarChart = ({barInput}) => {
         maintainAspectRatio: false,
         plugins: {
           title: {
+            font: {
+              size: 18
+            },
             display: true,
             text: "QUANTITY AVAILABLE IN STORE",
             align: "center"

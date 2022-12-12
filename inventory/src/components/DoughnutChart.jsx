@@ -9,7 +9,10 @@ const DoughnutChart = ({input}) => {
         plugins: {
           title: {
             display: true,
-            text: "QUANTITY AVAILABLE IN STORE",
+            font: {
+              size: 18
+            },
+            text: "PERCENTAGE OF PROFIT FOR TOP 5 PRODUCTS",
             align: "center"
           },
           animation : {

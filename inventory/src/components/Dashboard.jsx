@@ -110,7 +110,7 @@ const [doughChartData] = [{
 
   return (
     
-    <div>
+    <div className='mx-auto'>
         <div name='stats-bar' className='w-auto mx-2 p-4 grid grid-cols-1 md:grid-cols-4 sm:grid-cols-2 mt-4 h-auto rounded-2xl items-center text-xl backdrop-blur-md shadow-2xl'>
         {stats.map(({id,title,stats,dllr,unit})=> (
             <div className='flex flex-col justify-around space-y-10 p-3 '>
@@ -125,18 +125,18 @@ const [doughChartData] = [{
                    
         </div>
        <div className='grid grid-cols-1 lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 rounded-2xl mt-3 bg-white mx-2 p-2 justify-around'> 
-        <div className='bg-white w-auto mx-3'>
+        <div className='bg-white w-auto mx-3 my-3'>
             <BarChart barInput={barChartData}/>
         </div>
-        <div className='bg-white w-auto mx-3'>
+        <div className='bg-white w-auto mx-3 my-3'>
             <BarChart2 barInput={barChart2Data}/>
         </div>
         </div>
         <div className='grid grid-cols-1 lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 rounded-2xl mt-3 bg-white mx-2 p-2 justify-around'> 
-        <div className='bg-white w-auto mx-3'>
+        <div className='bg-white w-auto mx-3 my-3'>
             <DoughnutChart input={doughChartData}/>
         </div>
-        <div className='bg-white w-auto mx-3'>
+        <div className='bg-white w-auto mx-3 my-3'>
             <LineChart lineInput={lineChartData}/>
         </div>
         </div>

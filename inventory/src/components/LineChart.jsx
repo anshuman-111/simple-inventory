@@ -8,6 +8,9 @@ const LineChart = ({lineInput}) => {
         maintainAspectRatio: false,
         plugins: {
             title: {
+              font: {
+                size: 18
+              },
               display: true,
               text: "MONTHLY PROFIT",
               align: "center"
