@@ -3,6 +3,8 @@ import {FiEdit3} from 'react-icons/fi'
 import {ImBin2} from 'react-icons/im'
 const ViewInv = () => {
 
+/* Defining table headers */
+
 const tableHeaders = [
   {
     id: 1,
@@ -45,9 +47,10 @@ const tableHeaders = [
 ]
 
 
-
+/* Defining state of fetched data */
 const [data, setData] = useState({})
 
+/* Defining state of Edit Modal Data */
 const [editModalData, setEditData] = useState({
   item_id: 0,
   item_name : "",
@@ -58,15 +61,21 @@ const [editModalData, setEditData] = useState({
   selling_price: 0,
   sale_date: ""
 })
+
+/* Defining state of Delete Modal Data */
 const [delData, setDelData] = useState({
   item_id: 0,
   item_name: ""
 })
+
+/* Defining state of form validation -- POST request will be sent only if formOK is True */
 const [formOK, setFormOK] = useState(false)
+
+/* Defining current date */
 const current = new Date();
 const today = `${current.getFullYear()}-${current.getMonth()+1}-${current.getDate()}`;
 
-
+/* filling modal with data from selected row */
 const showData = [{
   id: 1,
   labelFor: "item_name", 
@@ -128,6 +137,7 @@ const showData = [{
 }
 ]
 
+/* validation on form when values are changed */
 const formChangeHandler = (event) => {
   event.preventDefault()
 
@@ -161,7 +171,7 @@ const formChangeHandler = (event) => {
   setData(formData)
 }
 
-
+/* Sending POST request with Edit modal form data */
 const formSubmitHandler = (event) => {
   event.preventDefault()
   const itemID = editModalData['item_id']
@@ -256,12 +266,14 @@ const Table = (props) => {
     )
 }
 
-
+/* Setting states for modal display */
 const [showEditModal, setEditModal] = useState(false)
 const [showDelModal, setDelModal] = useState(false)
+
+/* Setting state for current row index */
 const [idxData, setIdx] = useState()
 
-
+/* Defining delete row function */
 const deleteRow = (idx) => {
   var dpRow = [...rows]
   dpRow = dpRow.filter(

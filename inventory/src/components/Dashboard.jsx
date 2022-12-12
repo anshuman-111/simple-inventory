@@ -6,12 +6,15 @@ import LineChart from './LineChart'
 
 
 const Dashboard = () => {
-
+/* Setting states for all charts and statistics bar */
 const [barData, setBarData] = useState([{}])
 const [bar2Data, setBar2Data] = useState([{}])
 const [lineData, setlineData] = useState([{}])
 const [doughData, setDoughData] = useState([{}])
 const [statsBar, setStatsBar] = useState([{}])
+
+
+/* Sending GET request to Flask API for chart data */
 useEffect(() => {
     fetch("/stats_charts").then((res) =>
         res.json().then((data) => {
@@ -26,6 +29,7 @@ useEffect(() => {
         );
     }, []); 
 
+/* Sending GET request to Flask API for statistics bar data */
 useEffect(() => {
 
     fetch("/stats").then((res) =>
@@ -34,6 +38,9 @@ useEffect(() => {
         })
         );
     }, []); 
+
+
+/* Defining array of statistics for stats bar */
 const stats = [
     {
         id: 1,
@@ -65,7 +72,7 @@ const stats = [
 
 
 
-
+/* Bar chart data */
 const [barChartData] = [{
     labels: barData.map((inp)=> inp['item_name']),
     title: {
@@ -79,24 +86,28 @@ const [barChartData] = [{
     }]
 }]
 
+/* Line chart data */
 const [lineChartData] = [{
     labels: lineData.map((inp)=> inp['month']),
     datasets: [{
         label: "Monthly Profit",
         data: lineData.map((inp)=> inp['profit']),
-        backgroundColor: '#0B5351'
+        backgroundColor: '#0B5351',
+        borderColor: '#A4303F'
     }]
 }]
 
+/* Second Bar chart data */
 const [barChart2Data] = [{
     labels: bar2Data.map((inp)=> inp['month']),
     datasets: [{
         label: "Sales",
         data: bar2Data.map((inp)=> inp['sales']),
-        backgroundColor: '#D36135',
+        backgroundColor: '#052F5F',
     }]
 }]
 
+/* Doughnut chart data */
 const [doughChartData] = [{
     labels: doughData.map((inp)=> inp['item_name']),
     datasets: [{
