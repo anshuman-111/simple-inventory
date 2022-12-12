@@ -57,7 +57,7 @@ cursor.execute('''CREATE TABLE IF NOT EXISTS purchase (
 
 pool.release(conn1)
 # Add Item route
-# ITEM DATA IS POSTED FROM FRONTEND AND STORED IN MySQL DB instance on AWS RDS
+
 @app.route('/add_item', methods=['POST'])
 def add():
     res = request.json
@@ -86,11 +86,7 @@ def del_item():
     print(res)
     return "OK"
 
-@app.route('/sell_item' , methods=["POST"])
-def sale():
-    res = request.json
-    return res
-
+# Edit Item route
 @app.route('/edit_item', methods=["POST"])
 def edit():
     res = request.json
@@ -115,11 +111,6 @@ def edit():
             cursor.execute(edit_query)
     pool.release(db)
     return res
-
-# Dashboard route
-@app.route('/home')
-def home():
-    return "DASHBOARD"
 
 # View Inventory route
 @app.route('/get_all')
