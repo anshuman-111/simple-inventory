@@ -1,3 +1,4 @@
+from pathlib import Path
 from flask import Flask, request, redirect, render_template, session
 from datetime import datetime
 import json
@@ -8,18 +9,23 @@ from dotenv import load_dotenv
 
 # PyMySQL raises packet sequence error because it operates on a single thread.
 # Creating a connection pool
-
-
-
+dotenv_path = Path('/Users/anshumangupta/Desktop/simple-inventory/flask-server/cred.env')
+load_dotenv(dotenv_path=dotenv_path)
+host = os.getenv('AWSRDS_HOST')
+password = os.getenv('AWSRDS_PASS')
+port = os.getenv('AWSRDS_PORT')
+user = os.getenv('AWSRDS_USER')
+db = os.getenv('AWSRDS_DB')
+print(host,db)
 # Connecting to AWS DB Instance
+pool = Pool(host=host,port=3306, user=user,password=password,db=db, autocommit=True)
 
-pool = Pool(host='database-1.c5jdmaeqpbra.ap-southeast-2.rds.amazonaws.com',port=3306, user='admin',password='root5337',db='inventory', autocommit=True)
 pool.init()
 conn1 = pool.get_conn()
 
 
 # Initializling ENV file
-load_dotenv()
+
 
 # initializing Flask App
 app = Flask(__name__)
@@ -126,6 +132,7 @@ def view():
     pool.release(db)
     return json.dumps(data, sort_keys=True, default=str)
 
+# Route for stats bar
 @app.route('/stats')
 def stats():
     db = pool.get_conn()
@@ -133,9 +140,12 @@ def stats():
    
     data =[{}]
     
+    # Get total revenue for inventory
     cursor.execute('SELECT SUM(selling_price*quantity_sold) as revenue FROM purchase')
     data[0]['revenue'] = '{:,}'.format(cursor.fetchone()['revenue'])
     data[0]['revenue'] = data[0]['revenue'][:-2]
+
+    # Get total value of current inventory
     cursor.execute('''
     SELECT SUM(purchase_price*(quantity-quantity_sold)) as total_value 
     FROM purchase''')
@@ -143,11 +153,14 @@ def stats():
     data[0]['total_value'] = '{:,}'.format((cursor.fetchone()['total_value']))
     data[0]['total_value'] = data[0]['total_value'][:-2]
 
+    # Get net profit
     cursor.execute('''
     SELECT (SUM(selling_price*quantity_sold) - SUM(purchase_price*quantity_sold)) as profit FROM purchase
     ''')
     data[0]['profit'] = '{:,}'.format(cursor.fetchone()['profit'])
     data[0]['profit'] = data[0]['profit'][:-2]
+
+    # get average number of days for an item in inventory
     cursor.execute('''
     SELECT AVG(DATEDIFF(sale_date,purchase_date)) as inv_days FROM purchase
     ''')
@@ -163,6 +176,7 @@ def stats():
     pool.release(db)
     return data
 
+# Route for charts
 @app.route('/stats_charts')
 def charts():
     db = pool.get_conn()
