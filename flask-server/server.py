@@ -1,5 +1,6 @@
 from pathlib import Path
-from flask import Flask, request, redirect, render_template, session
+from flask import Flask, request
+from flask_cors import CORS
 from datetime import datetime
 import json
 import pymysql
@@ -7,8 +8,14 @@ from pymysqlpool.pool import Pool
 import os
 from dotenv import load_dotenv
 
-# PyMySQL raises packet sequence error because it operates on a single thread.
-# Creating a connection pool
+
+
+# initializing Flask App
+app = Flask(__name__)
+CORS(app)
+
+
+# Initializling ENV file
 dotenv_path = Path('/Users/anshumangupta/Desktop/simple-inventory/flask-server/cred.env')
 load_dotenv(dotenv_path=dotenv_path)
 host = os.getenv('AWSRDS_HOST')
@@ -16,7 +23,9 @@ password = os.getenv('AWSRDS_PASS')
 port = os.getenv('AWSRDS_PORT')
 user = os.getenv('AWSRDS_USER')
 db = os.getenv('AWSRDS_DB')
-print(host,db)
+
+# PyMySQL raises packet sequence error because it operates on a single thread.
+# Creating a connection pool
 # Connecting to AWS DB Instance
 pool = Pool(host=host,port=3306, user=user,password=password,db=db, autocommit=True)
 
@@ -24,17 +33,11 @@ pool.init()
 conn1 = pool.get_conn()
 
 
-# Initializling ENV file
 
 
-# initializing Flask App
-app = Flask(__name__)
 
 # Configuring app secret and DB instance
 app.config['SECRET_KEY'] = 'secret'
-host_name=os.getenv('AWSRDS_HOST')
-pass_aws=os.getenv('AWSRDS_PASS')
-user_aws=os.getenv('AWSRDS_USER')
 
 # Initializing DB cursor
 cursor = conn1.cursor()
@@ -70,7 +73,7 @@ def add():
     
     cursor.execute(insert_query)
     pool.release(db)
-    print(res)
+
     return "Added to DB"
 
 # Delete Item route
@@ -83,7 +86,7 @@ def del_item():
     
     cursor.execute(delete_query)
     pool.release(db)
-    print(res)
+
     return "OK"
 
 # Edit Item route
@@ -217,12 +220,10 @@ def charts():
 
 
     pool.release(db)
-    print(doughdata)
-    print(profit)
     return [bardata, bar_2_data, linedata, doughdata]
 
 
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=8080)
